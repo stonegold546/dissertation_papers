@@ -1,0 +1,64 @@
+File Manifest for ICPSR 37106
+
+Kenny, Rose Anne. The Irish Longitudinal Study on Ageing (TILDA), 2014-
+2015. ICPSR37106-v2. Ann Arbor, MI: Inter-university Consortium for
+Political and Social Research [distributor], 2018-08-02.
+http://doi.org/10.3886/ICPSR37106.v2
+
+Details on the version history can be found below the file listings.
+
+
+Study-level Documentation
+
+    Filename                            Record  Record    Var.    Date        MD5
+                                        Length  Count     Count   Updated     Checksum
+
+    37106-descriptioncitation.pdf       -       -         -       2019-08-08  -
+
+    37106-related_literature.txt        -       -         -       daily       -
+
+    37106-manifest.txt                  -       -         -       daily       -
+
+
+DS0001 The Irish Longitudinal Study on Ageing (TILDA), 2014-2015
+
+    Filename                            Record  Record    Var.    Date        MD5
+                                        Length  Count     Count   Updated     Checksum
+
+    37106-0001-Codebook-derived_variables.pdf -       -         -       2018-08-02  0309431e8aaeff9d0cb877dbc65d2e0a
+
+    37106-0001-Codebook.pdf             -       -         -       2018-07-30  b856c6d97d929a8483d7ad54955c7b22
+
+    37106-0001-Data.dta                 -       6,400     545     2018-07-30  26b00db2be78b1008b9288df7aca39f0
+
+    37106-0001-Data.rda                 -       6,400     545     2018-07-30  b9d67f5f28d4c56d857b0838acb491cb
+
+    37106-0001-Data.sav                 -       6,400     545     2018-07-30  d459c2fd9195194e9f6ac240dedb0979
+
+    37106-0001-Data.stc                 -       6,400     545     2018-07-30  2249c636d14e7bac75e4d4caa6c38d9f
+
+    37106-0001-Data.tsv                 -       6,400     545     2018-07-30  2ba5d438f78cffa9258b5c96a1b847e1
+
+    37106-0001-Data.txt                 1303    6,400     545     2018-07-30  3963c3e29b03732d672f372e2f7f57de
+
+    37106-0001-Documentation-release_guide.pdf -       -         -       2018-07-30  1c829fcb15ea657cc27cf425cf179f6e
+
+    37106-0001-Documentation-tilda_crosswalk.xlsx -       -         -       2018-07-30  a95500de606f1b1fa20e7cb81d5954a1
+
+    37106-0001-Documentation-var_anonymisation.pdf -       -         -       2018-07-30  848ea4ebc9d90c702d0ee852b6e8a0e8
+
+    37106-0001-Questionnaire.pdf        -       -         -       2018-07-30  edf4377a40d8b182ca3db2c53ab67da1
+
+    37106-0001-Setup.dct                -       -         -       2018-07-30  f62f9791a549d734573cdf73a23a9a39
+
+    37106-0001-Setup.do                 -       -         -       2018-07-30  bde1140e11e37217ba42bc5402dca9f9
+
+    37106-0001-Setup.sas                -       -         -       2018-07-30  9cf73151e8fed8983dd425c2ea546980
+
+    37106-0001-Setup.sps                -       -         -       2018-07-30  4bb617604944ca0fa7412eb78c60f686
+
+
+Version History
+
+2018-08-02 This collection was updated to correct the Derived Variables
+Codebook.
