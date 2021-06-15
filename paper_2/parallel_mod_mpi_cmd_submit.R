@@ -10,6 +10,7 @@ source("parallel_mod_mpi_cmd_load_packages.R")
 source("parallel_mod_mpi_cmd_prep_data.R")
 
 stan.scripts <- "summary_text/stan_scripts/"  # location of stan scripts
+# Create your own plot saving location folder
 print.images <- "summary_text/text_clean/"  # location to print images
 
 # FIGURE 1 ----
@@ -173,16 +174,8 @@ print(fit.0, c("theta_p", "yhat", "lp__"), include = FALSE)
 # beta[5]      0.39    0.00 0.10  0.19  0.32  0.39  0.46  0.59  1350 1.01
 # beta[6]      1.31    0.00 0.09  1.13  1.25  1.31  1.37  1.50  1164 1.01
 
-# saveRDS(fit.0, "res/mod_1.rds")
-fit.0 <- readRDS("res/mod_1.rds")
 check_hmc_diagnostics(fit.0)
 # 2 of 24000 iterations ended with a divergence (0.00833333333333333%).
-
-# coefficient omega:
-sum(apply(as.data.frame(fit.0, "lambda"), 2, median)) ^ 2 / (
-  sum(apply(as.data.frame(fit.0, "lambda"), 2, median)) ^ 2 +
-    sum(apply(as.data.frame(fit.0, "sigma"), 2, median) ^ 2)
-)
 
 # Traceplots:
 mcmc_trace(fit.0, pars = c(
@@ -404,8 +397,6 @@ print(fit.1, c("Theta", "yhat", "lp__"), include = FALSE)
 # sigma[6]          0.38    0.00 0.03  0.32  0.36  0.38  0.40  0.45 21283 1.00
 # r                 0.65    0.00 0.14  0.34  0.55  0.65  0.75  0.90  1927 1.00
 
-# saveRDS(fit.1, "res/mod_2.rds")
-fit.1 <- readRDS("res/mod_2.rds")
 check_hmc_diagnostics(fit.1)
 # 4 of 24000 iterations ended with a divergence (0.0166666666666667%).
 
@@ -537,97 +528,6 @@ ggplot(Theta, aes(m, s)) +
         panel.spacing = unit(.5, "cm"), axis.ticks = element_blank()) +
   labs(x = "Country averages (posterior mean)", y = "Country averages (posterior SD)")
 ggsave(paste0(print.images, "09_posterior_mean.pdf"), width = 6.5, height = 4)
-
-head(L.df <- as.matrix(as.data.frame(fit.0, "lambda")))
-head(S.df <- as.matrix(as.data.frame(fit.0, "sigma")))
-
-unique(sort(attr(lavPredict(lav.fit, se = "standard"), "se")[[1]])[1:10])
-1 / sqrt(
-  sum(lavInspect(lav.fit, "est")$lambda ^ 2 /
-        diag(lavInspect(lav.fit, "est")$theta)))
-
-hist(sem.s <- sapply(1:24e3, function (i) {
-  1 / sqrt(sum(L.df[i, ] ^ 2 / S.df[i, ] ^ 2))
-}), main = "", xlab = "")
-print(describe(sem.s), digits = 4)
-quantile(sem.s, c(.025, .5, .975))
-
-(id.s <- rep(1:101, 6))
-(item.s <- rep.int(1:6, rep(101, 6)))
-
-head(t.df <- matrix(seq(-2, 2, length.out = 101)))
-cov(t.df <- MASS::mvrnorm(101, rep(0, 2), matrix(c(1, 0, 0, 1), 2), empirical = TRUE))
-describe(t.df)
-
-head(theta1.df <- as.matrix(as.data.frame(fit.1, "Theta")[, 1:101]))
-head(lm1.df <- as.matrix(as.data.frame(fit.1, "lambda")))
-head(aln.df <- as.numeric(as.data.frame(fit.1, "ln_alpha")[, 1]))
-head(b1ln.df <- as.matrix(as.data.frame(fit.1, "ln_sigma2_dev")))
-head(lmln.df <- as.matrix(as.data.frame(fit.1, "ln_lambda")))
-head(cor.df <- as.numeric(as.data.frame(fit.1, "r")[, 1]))
-
-dim(T1.df <- sapply(1:24e3, function (i) {
-  r <- cor.df[i]
-  data.table(
-    y = lm1.df[i, item.s] ^ 2 /
-      exp(r * theta1.df[i, id.s] * lmln.df[i, item.s] + b1ln.df[i, item.s] + aln.df[i]),
-    x = id.s)[, 1 / sqrt(sum(y)), x]$V1
-}))
-rm(lm1.df, aln.df, b1ln.df, lmln.df, cor.df)
-gc()
-
-T1.df.l <- as.data.table(melt(T1.df))
-T1.df.l
-T1.df.l <- T1.df.l[, .(median(value), quantile(value, .25), quantile(value, .75)), Var1]
-T1.df.l[, id := colMeans(theta1.df)[Var1]]
-T1.df.l
-ggplot(T1.df.l, aes(id, V1)) +
-  geom_line(alpha = .5, size = .5) +
-  geom_line(aes(y = V2), alpha = .5, size = .5) +
-  geom_line(aes(y = V3), alpha = .5, size = .5) +
-  geom_hline(yintercept = quantile(sem.s, c(.5, .25, .75)), linetype = 2) +
-  geom_rug(y = NA) +
-  labs(y = "Standard error of measurement", x = "Location latent variable")
-
-describe(Theta[method == 1, s])
-
-lav.fit
-
-X.mat <- as.matrix(dat[, 15:20])
-X.mat
-(p.means <- rowMeans(X.mat, na.rm = TRUE))
-(missings <- which(is.na(X.mat), arr.ind = TRUE))
-(X.mat[is.na(X.mat)] <- p.means[missings[, 1]])
-X.mat <- t((t(X.mat) - colMeans(X.mat)) / apply(X.mat, 2, sd))
-X.mat
-
-(R.inv <- chol2inv(chol(cor(X.mat))))
-(l.cor <- lavInspect(lav.fit, "est")$lambda / sqrt(
-  lavInspect(lav.fit, "est")$lambda ^ 2 +
-    diag(lavInspect(lav.fit, "est")$theta)
-))
-(R.inv %*% l.cor)
-hist(X.mat %*% (R.inv %*% l.cor))
-cor(X.mat %*% (R.inv %*% l.cor), lavPredict(lav.fit))
-plot(X.mat %*% (R.inv %*% l.cor), lavPredict(lav.fit))
-
-lambda0.df <- as.matrix(as.data.frame(fit.0, "lambda"))
-sigma.df <- as.matrix(as.data.frame(fit.0, "sigma"))
-
-dim(FS.dist <- sapply(1:24e3, function (i) {
-  l <- lambda0.df[i, ]
-  l <- l / sqrt(l ^ 2 + sigma.df[i, ] ^ 2)
-  X.mat %*% (R.inv %*% l)
-}))
-describe(apply(FS.dist, 1, mean))
-describe(apply(FS.dist, 1, sd))
-plot(rowMeans(FS.dist), apply(FS.dist, 1, sd))
-
-scatter.smooth(colMeans(as.data.frame(fit.0, "theta_p")), apply(as.data.frame(fit.0, "theta_p"), 2, sd))
-scatter.smooth(apply(as.data.frame(fit.1, "Theta"), 2, sd)[1:101], apply(as.data.frame(fit.0, "theta_p"), 2, sd))
-abline(a = 0, b = 1)
-scatter.smooth(apply(as.data.frame(fit.1, "Theta"), 2, mean)[102:202],
-               apply(as.data.frame(fit.1, "Theta"), 2, sd)[102:202])
 
 # R Session Info (Contains exact package versions and system information) ----
 sessionInfo()
