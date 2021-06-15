@@ -1,5 +1,6 @@
 # SIMULATION DATA ANALYSIS # 1
 
+# Create own plot folder
 plot_folder <- "~/Dropbox/dissertation/paper_3/plots/"
 
 library(MASS)
@@ -108,8 +109,6 @@ dat.list <- list(
   n_1d = N.df$n, p_ids = N.df$id, i_ids = N.df$time, shape_r = 2,
   lambda_median = log(.5), lambda_scale = log(4 / .5) / qnorm(.99),
   n_neg = sum(params$lambda < 0), neg_l = which(params$lambda < 0))
-# saveRDS(dat.list, "sim_dat_res/sim_dat_list.rds")
-# dat.list <- readRDS("sim_dat_res/sim_dat_list.rds")
 
 multi_beta_bin <- cmdstan_model("stan_scripts/multi_beta_bin.stan")
 mbb.fit <- multi_beta_bin$sample(
@@ -118,8 +117,6 @@ mbb.fit <- multi_beta_bin$sample(
 mbb.fit$cmdstan_diagnose()
 mbb.fit <- read_stan_csv(mbb.fit$output_files())
 print(mbb.fit, c("eta"), digits_summary = 3, include = FALSE)
-# saveRDS(mbb.fit, "sim_dat_res/mbb.fit.rds")
-# mbb.fit <- readRDS("sim_dat_res/mbb.fit.rds")
 rowSums(get_elapsed_time(mbb.fit))
 # chain:1 chain:2 chain:3
 # 354.373 271.996 356.379
@@ -140,8 +137,6 @@ mbb.fit.lsm <- multi_beta_bin_lsm$sample(
 mbb.fit.lsm$cmdstan_diagnose()
 mbb.fit.lsm <- read_stan_csv(mbb.fit.lsm$output_files())
 print(mbb.fit.lsm, c("Eta"), digits_summary = 3, include = FALSE)
-# saveRDS(mbb.fit.lsm, "sim_dat_res/mbb.fit.lsm.rds")
-# mbb.fit.lsm <- readRDS("sim_dat_res/mbb.fit.lsm.rds")
 rowSums(get_elapsed_time(mbb.fit.lsm))
 # chain:1 chain:2 chain:3
 # 588.810 589.594 612.272
@@ -216,8 +211,6 @@ i.mbb.fit <- int_multi_bb$sample(
 i.mbb.fit$cmdstan_diagnose()
 i.mbb.fit <- read_stan_csv(i.mbb.fit$output_files())
 print(i.mbb.fit, c("eta"), digits_summary = 3, include = FALSE)
-# saveRDS(i.mbb.fit, "sim_dat_res/i.mbb.fit.rds")
-# i.mbb.fit <- readRDS("sim_dat_res/i.mbb.fit.rds")
 rowSums(get_elapsed_time(i.mbb.fit))
 #  chain:1  chain:2  chain:3 
 # 1113.872 1082.994 1121.843 
@@ -241,8 +234,6 @@ i.lsm.mbb.fit <- int_multi_bb_lsm$sample(
 i.lsm.mbb.fit$cmdstan_diagnose()
 i.lsm.mbb.fit <- read_stan_csv(i.lsm.mbb.fit$output_files())
 print(i.lsm.mbb.fit, c("Eta"), digits_summary = 3, include = FALSE)
-# saveRDS(i.lsm.mbb.fit, "sim_dat_res/i.lsm.mbb.fit.rds")
-# i.lsm.mbb.fit <- readRDS("sim_dat_res/i.lsm.mbb.fit.rds")
 rowSums(get_elapsed_time(i.lsm.mbb.fit))
 #  chain:1  chain:2  chain:3 
 # 1432.267 1477.254 1452.091 

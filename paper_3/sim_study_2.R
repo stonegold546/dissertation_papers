@@ -1,5 +1,6 @@
 # SIMULATION DATA ANALYSIS # 2
 
+# Create own plot folder
 plot_folder <- "~/Dropbox/dissertation/paper_3/plots/"
 
 library(MASS)
@@ -91,8 +92,6 @@ dat.list <- list(
   lambda_median = log(.5), lambda_scale = log(4 / .5) / qnorm(.99),
   Nf = ncol(Lambda), Nl = sum(Lambda != 0),
   Load_Pattern = (Lambda > 0) + -1 * (Lambda < 0))
-# saveRDS(dat.list, "sim_dat_res/sim_dat_list_md.rds")
-# dat.list <- readRDS("sim_dat_res/sim_dat_list_md.rds")
 
 multi_beta_bin_lsm <- cmdstan_model("stan_scripts/multi_beta_bin_lsm_multidim.stan")
 mbb.lsm.fit <- multi_beta_bin_lsm$sample(
@@ -101,8 +100,6 @@ mbb.lsm.fit <- multi_beta_bin_lsm$sample(
 mbb.lsm.fit$cmdstan_diagnose()
 mbb.lsm.fit <- read_stan_csv(mbb.lsm.fit$output_files())
 print(mbb.lsm.fit, c("Eta", "R_chol"), digits_summary = 3, include = FALSE)
-# saveRDS(mbb.lsm.fit, "sim_dat_res/mbb.fit.lsm.md.rds")
-# mbb.lsm.fit <- readRDS("sim_dat_res/mbb.fit.lsm.md.rds")
 rowSums(get_elapsed_time(mbb.lsm.fit))
 # chain:1 chain:2 chain:3 
 # 412.848 390.260 400.484 
@@ -156,8 +153,6 @@ i.lsm.mbb.fit <- int_multi_bb_lsm$sample(
 i.lsm.mbb.fit$cmdstan_diagnose()
 i.lsm.mbb.fit <- read_stan_csv(i.lsm.mbb.fit$output_files())
 print(i.lsm.mbb.fit, c("Eta_pr"), digits_summary = 3, include = FALSE)
-# saveRDS(i.lsm.mbb.fit, "sim_dat_res/i.lsm.mbb.fit.md.rds")
-# i.lsm.mbb.fit <- readRDS("sim_dat_res/i.lsm.mbb.fit.md.rds")
 rowSums(get_elapsed_time(i.lsm.mbb.fit))
 # chain:1 chain:2 chain:3 
 # 869.462 842.473 862.813 

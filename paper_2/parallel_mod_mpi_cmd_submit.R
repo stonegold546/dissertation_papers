@@ -253,6 +253,7 @@ yhat.0.df[, mean(response > ll & response < ul), item_n]
 
 yhat.0.df$theta <- apply(as.data.frame(fit.0, "theta_p"), 2, median)[yhat.0.df$id]
 
+# To obtain correlation between residuals within each iteration:
 yhat.0.f.l <- melt(as.data.table(cbind(yhat.0.f, rep = 1:nrow(yhat.0.f))), id.vars = "rep")
 yhat.0.f.l
 yhat.0.f.l[, case := as.integer(gsub("yhat\\[|\\]", "", variable))]

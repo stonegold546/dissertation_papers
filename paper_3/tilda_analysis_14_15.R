@@ -1,6 +1,7 @@
 # REAL DATA ANALYSIS
 # Implement a rounding strategy of people taking nearby numbers to round numbers
 
+# Create own plot folder
 plot_folder <- "~/Dropbox/dissertation/paper_3/plots/"
 
 library(MASS)
@@ -97,6 +98,8 @@ i.bb.fit$cmdstan_diagnose()
 i.bb.fit <- read_stan_csv(i.bb.fit$output_files())
 print(i.bb.fit, c("log_lik", "scale", "p_lgt", "r_lgt"), digits_summary = 3, include = FALSE)
 
+# Analyze subset of data first:
+
 set.seed(12345)
 X.df <- X.df.full[X.df.full$id %in% sample(unique(X.df.full$id), 1e3), ]
 X.df$id.f <- as.integer(as.factor(X.df$id))
@@ -125,8 +128,6 @@ i.mbb.fit <- int_multi_bb$sample(
 i.mbb.fit$cmdstan_diagnose()
 i.mbb.fit <- read_stan_csv(i.mbb.fit$output_files())
 print(i.mbb.fit, c("lambda_p", "eta"), digits_summary = 3, include = FALSE)
-# saveRDS(i.mbb.fit, "real_dat_res_3/i.mbb.fit.rds")
-# i.mbb.fit <- readRDS("real_dat_res_3/i.mbb.fit.rds")
 rowSums(get_elapsed_time(i.mbb.fit))
 # chain:1 chain:2 chain:3 
 # 277.383 316.166 301.697 
@@ -143,8 +144,6 @@ i.mbb.fit.lsm <- int_multi_bb_lsm$sample(
 i.mbb.fit.lsm$cmdstan_diagnose()
 i.mbb.fit.lsm <- read_stan_csv(i.mbb.fit.lsm$output_files())
 print(i.mbb.fit.lsm, c("Eta_pr"), digits_summary = 3, include = FALSE)
-# saveRDS(i.mbb.fit.lsm, "real_dat_res_3/i.mbb.fit.lsm.rds")
-# i.mbb.fit.lsm <- readRDS("real_dat_res_3/i.mbb.fit.lsm.rds")
 rowSums(get_elapsed_time(i.mbb.fit.lsm))
 # chain:1 chain:2 chain:3 
 # 426.861 420.597 451.490 
@@ -164,7 +163,7 @@ print(i.mbb.fit.lsm, c("rho"), digits_summary = 3)
 print(i.mbb.fit.lsm, c("lambda"), digits_summary = 3)
 
 orig.ids <- as.data.table(X.df)[, .N, list(id.f, id)][order(id.f), id]
-table(outcome <- read.csv("data/ICPSR_37106/DS0001/37106-0001-Data.tsv", sep = "\t")[orig.ids, "SOCSOCPARTICIP"])
+table(outcome <- read.csv("ICPSR_37106/DS0001/37106-0001-Data.tsv", sep = "\t")[orig.ids, "SOCSOCPARTICIP"])
 outcome[outcome > 1] <- NA
 dat.list.int$outcome <- outcome
 dat.list.int$outcome[is.na(dat.list.int$outcome)] <- -1
@@ -177,8 +176,6 @@ i.mbb.fit.lsm.p1 <- int_multi_bb_lsm_p1$sample(
 i.mbb.fit.lsm.p1$cmdstan_diagnose()
 i.mbb.fit.lsm.p1 <- read_stan_csv(i.mbb.fit.lsm.p1$output_files())
 print(i.mbb.fit.lsm.p1, c("Eta_pr"), digits_summary = 3, include = FALSE)
-# saveRDS(i.mbb.fit.lsm.p1, "real_dat_res_3/i.mbb.fit.lsm.p1.rds")
-# i.mbb.fit.lsm.p1 <- readRDS("real_dat_res_3/i.mbb.fit.lsm.p1.rds")
 rowSums(get_elapsed_time(i.mbb.fit.lsm.p1))
 # chain:1 chain:2 chain:3 
 # 543.953 526.171 562.719 
@@ -205,6 +202,8 @@ print(i.mbb.fit.lsm.p1, c("p"), digits_summary = 3)
 print(i.mbb.fit.lsm.p1, c("rho"), digits_summary = 3)
 print(i.mbb.fit.lsm.p1, c("lambda"), digits_summary = 3)
 
+# Analyze full dataset:
+
 dat.list.int.full <- list(
   Np = max(X.df.full$id.f), Ni = max(X.df.full$time), N = 7, shape_r = 2,
   lambda_median = log(.5), lambda_scale = log(4 / .5) / qnorm(.99),
@@ -228,8 +227,6 @@ i.mbb.fit.full <- int_multi_bb$sample(
 i.mbb.fit.full$cmdstan_diagnose()
 i.mbb.fit.full <- read_stan_csv(i.mbb.fit.full$output_files())
 print(i.mbb.fit.full, c("eta"), digits_summary = 3, include = FALSE)
-# saveRDS(i.mbb.fit.full, "real_dat_res_3/i.mbb.fit.full.rds")
-# i.mbb.fit.full <- readRDS("real_dat_res_3/i.mbb.fit.full.rds")
 rowSums(get_elapsed_time(i.mbb.fit.full))
 #  chain:1  chain:2  chain:3 
 # 3030.693 2965.883 3012.150 
@@ -246,8 +243,6 @@ i.mbb.fit.lsm.full <- int_multi_bb_lsm$sample(
 i.mbb.fit.lsm.full$cmdstan_diagnose()
 i.mbb.fit.lsm.full <- read_stan_csv(i.mbb.fit.lsm.full$output_files())
 print(i.mbb.fit.lsm.full, c("Eta_pr"), digits_summary = 3, include = FALSE)
-# saveRDS(i.mbb.fit.lsm.full, "real_dat_res_3/i.mbb.fit.lsm.full.rds")
-# i.mbb.fit.lsm.full <- readRDS("real_dat_res_3/i.mbb.fit.lsm.full.rds")
 rowSums(get_elapsed_time(i.mbb.fit.lsm.full))
 # chain:1 chain:2 chain:3 
 # 3926.81 3951.64 3820.41 
@@ -270,7 +265,7 @@ round(plogis(qnorm(c(.025, .25, .5, .75, .975), -1.7377, 1.3445)), 3)
 # [1] 0.012 0.066 0.150 0.303 0.710
 
 orig.ids <- as.data.table(X.df.full)[, .N, list(id.f, id)][order(id.f), id]
-table(outcome <- read.csv("data/ICPSR_37106/DS0001/37106-0001-Data.tsv", sep = "\t")[orig.ids, "SOCSOCPARTICIP"])
+table(outcome <- read.csv("ICPSR_37106/DS0001/37106-0001-Data.tsv", sep = "\t")[orig.ids, "SOCSOCPARTICIP"])
 outcome[outcome > 1] <- NA
 dat.list.int.full$outcome <- outcome
 dat.list.int.full$outcome[is.na(dat.list.int.full$outcome)] <- -1
@@ -283,8 +278,6 @@ i.mbb.fit.lsm.p1.full <- int_multi_bb_lsm_p1$sample(
 i.mbb.fit.lsm.p1.full$cmdstan_diagnose()
 i.mbb.fit.lsm.p1.full <- read_stan_csv(i.mbb.fit.lsm.p1.full$output_files())
 print(i.mbb.fit.lsm.p1.full, c("Eta_pr"), digits_summary = 3, include = FALSE)
-# saveRDS(i.mbb.fit.lsm.p1.full, "real_dat_res_3/i.mbb.fit.lsm.p1.full.rds")
-# i.mbb.fit.lsm.p1.full <- readRDS("real_dat_res_3/i.mbb.fit.lsm.p1.full.rds")
 rowSums(get_elapsed_time(i.mbb.fit.lsm.p1.full))
 # chain:1 chain:2 chain:3 
 # 6693.48 6714.76 6541.61 
