@@ -1,0 +1,10 @@
+*.Rproj
+.RData
+.Rhistory
+.Rproj.user
+/paper_2/summary_text/stan_scripts/*
+!/paper_2/summary_text/stan_scripts/*.stan
+/paper_2/summary_text/stan_scripts/cong_gp.stan
+/paper_2/summary_text/text_clean/*
+/paper_2/summary_text/mpi_dat/mpi_2019.csv
+/paper_2/res
